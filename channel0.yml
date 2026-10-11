@@ -1,0 +1,89 @@
+# Offline selene standard library: Luau base plus the Roblox globals this project uses.
+# (The official roblox std is generated from Roblox's API dump, which this environment cannot reach.)
+base: luau
+name: channel0
+globals:
+  script:
+    any: true
+  game:
+    any: true
+  workspace:
+    any: true
+  Enum:
+    any: true
+  Instance:
+    any: true
+  Vector3:
+    any: true
+  Vector2:
+    any: true
+  CFrame:
+    any: true
+  Color3:
+    any: true
+  ColorSequence:
+    any: true
+  ColorSequenceKeypoint:
+    any: true
+  NumberSequence:
+    any: true
+  NumberSequenceKeypoint:
+    any: true
+  NumberRange:
+    any: true
+  UDim:
+    any: true
+  UDim2:
+    any: true
+  Rect:
+    any: true
+  TweenInfo:
+    any: true
+  RaycastParams:
+    any: true
+  OverlapParams:
+    any: true
+  Ray:
+    any: true
+  Random:
+    any: true
+  BrickColor:
+    any: true
+  Font:
+    any: true
+  PhysicalProperties:
+    any: true
+  Region3:
+    any: true
+  DateTime:
+    any: true
+  Axes:
+    any: true
+  Faces:
+    any: true
+  PathWaypoint:
+    any: true
+  task:
+    any: true
+  warn:
+    any: true
+  typeof:
+    any: true
+  tick:
+    any: true
+  time:
+    any: true
+  elapsedTime:
+    any: true
+  shared:
+    any: true
+  settings:
+    any: true
+  plugin:
+    any: true
+  debug:
+    any: true
+  utf8:
+    any: true
+  buffer:
+    any: true

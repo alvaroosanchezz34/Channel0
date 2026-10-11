@@ -109,13 +109,15 @@ local function enter(machine: Machine, to: AnchorState, reason: string, ctx: Con
 	if to == "Observing" then
 		machine.stateDuration = roll(machine.rng, AnchorConfig.ObserveDuration) * scale / math.max(0.5, ctx.aggression)
 	elseif to == "Displacement" then
-		machine.cyclesLeft = machine.rng:NextInteger(AnchorConfig.DisplacementCycles[1], AnchorConfig.DisplacementCycles[2])
+		machine.cyclesLeft =
+			machine.rng:NextInteger(AnchorConfig.DisplacementCycles[1], AnchorConfig.DisplacementCycles[2])
 		machine.stateDuration = math.huge
 	elseif to == "Manifestation" then
 		machine.stateDuration = AnchorConfig.ManifestMaxDuration
 	elseif to == "Hunt" then
 		machine.telegraphing = true
-		machine.stateDuration = AnchorConfig.HuntTelegraph + roll(machine.rng, AnchorConfig.HuntDuration) * ctx.aggression
+		machine.stateDuration = AnchorConfig.HuntTelegraph
+			+ roll(machine.rng, AnchorConfig.HuntDuration) * ctx.aggression
 	elseif to == "Withdrawal" then
 		local crisis = ctx.phase == "Crisis"
 		machine.stateDuration = roll(machine.rng, AnchorConfig.WithdrawalDuration) * (if crisis then 0.6 else 1)
@@ -178,7 +180,8 @@ function AnchorMachine.step(machine: Machine, dt: number, ctx: Context): { Machi
 	elseif state == "Manifestation" then
 		if ctx.slateActive then
 			enter(machine, "Withdrawal", "Slate", ctx, events)
-		elseif t >= AnchorConfig.ManifestMinDuration
+		elseif
+			t >= AnchorConfig.ManifestMinDuration
 			and machine.huntCooldown <= 0
 			and ctx.hasTarget
 			and (ctx.phase == "Crisis" or ctx.deadAir or ctx.pressure >= AnchorConfig.HuntPressure)
@@ -231,7 +234,12 @@ function AnchorMachine.isPhysical(machine: Machine): boolean
 end
 
 -- Debug/scripted transition along a legal edge only.
-function AnchorMachine.force(machine: Machine, to: AnchorState, ctx: Context, reason: string): ({ MachineEvent }?, string?)
+function AnchorMachine.force(
+	machine: Machine,
+	to: AnchorState,
+	ctx: Context,
+	reason: string
+): ({ MachineEvent }?, string?)
 	if not AnchorMachine.canTransition(machine.state, to) then
 		return nil, `cannot go from {machine.state} to {to}`
 	end

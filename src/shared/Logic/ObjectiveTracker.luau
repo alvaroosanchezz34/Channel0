@@ -50,7 +50,11 @@ function ObjectiveTracker.setPlayerCount(tracker: Tracker, count: number)
 end
 
 -- Re-evaluates every objective. Returns ids that became complete during this call.
-function ObjectiveTracker.evaluate(tracker: Tracker, facts: { [string]: boolean }, counters: { [string]: number }): { string }
+function ObjectiveTracker.evaluate(
+	tracker: Tracker,
+	facts: { [string]: boolean },
+	counters: { [string]: number }
+): { string }
 	local completed = {}
 	for _, def in tracker.defs do
 		if not def.condition and not tracker.done[def.id] then

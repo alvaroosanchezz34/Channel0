@@ -114,7 +114,12 @@ function EventSelector.eligible(selector: Selector, def: EventDef, ctx: Context)
 end
 
 -- Picks among eligible events of the given tiers (all tiers when nil).
-function EventSelector.choose(selector: Selector, ctx: Context, rng: SeededRandom.SeededRandom, tiers: { string }?): EventDef?
+function EventSelector.choose(
+	selector: Selector,
+	ctx: Context,
+	rng: SeededRandom.SeededRandom,
+	tiers: { string }?
+): EventDef?
 	local candidates: { EventDef } = {}
 	for _, def in selector.defs do
 		if (not tiers or table.find(tiers, def.tier)) and EventSelector.eligible(selector, def, ctx) then

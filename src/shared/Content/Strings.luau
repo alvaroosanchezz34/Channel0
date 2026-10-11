@@ -765,13 +765,15 @@ local function format(template: string, vars: { [string]: any }?): string
 	if not vars then
 		return template
 	end
-	return (string.gsub(template, "{(%w+)}", function(name)
-		local value = vars[name]
-		if value == nil then
-			return "{" .. name .. "}"
-		end
-		return tostring(value)
-	end))
+	return (
+		string.gsub(template, "{(%w+)}", function(name)
+			local value = vars[name]
+			if value == nil then
+				return "{" .. name .. "}"
+			end
+			return tostring(value)
+		end)
+	)
 end
 
 function Strings.languageFor(localeId: string?): "en" | "es"
