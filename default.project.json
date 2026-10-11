@@ -1,0 +1,79 @@
+{
+	"name": "Channel0",
+	"tree": {
+		"$className": "DataModel",
+		"ReplicatedStorage": {
+			"Shared": {
+				"$path": "src/shared"
+			},
+			"Assets": {
+				"$path": "assets/Assets.rbxm"
+			}
+		},
+		"ServerScriptService": {
+			"Server": {
+				"$path": "src/server"
+			}
+		},
+		"StarterPlayer": {
+			"$properties": {
+				"CameraMode": "LockFirstPerson",
+				"CharacterWalkSpeed": 11,
+				"CharacterJumpPower": 0,
+				"CharacterUseJumpPower": true,
+				"EnableMouseLockOption": false,
+				"CameraMaxZoomDistance": 0.5,
+				"CameraMinZoomDistance": 0.5
+			},
+			"StarterPlayerScripts": {
+				"Client": {
+					"$path": "src/client"
+				}
+			}
+		},
+		"Players": {
+			"$properties": {
+				"CharacterAutoLoads": false,
+				"RespawnTime": 3
+			}
+		},
+		"Workspace": {
+			"$properties": {
+				"Gravity": 196.2,
+				"FilteringEnabled": true
+			},
+			"Station": {
+				"$path": "assets/Station.rbxm"
+			}
+		},
+		"Lighting": {
+			"$properties": {
+				"Technology": "Future",
+				"Ambient": [0.08, 0.08, 0.1],
+				"OutdoorAmbient": [0.1, 0.11, 0.14],
+				"Brightness": 0.6,
+				"ClockTime": 0.5,
+				"EnvironmentDiffuseScale": 0.35,
+				"EnvironmentSpecularScale": 0.6,
+				"ExposureCompensation": 0.15,
+				"GlobalShadows": true,
+				"ShadowSoftness": 0.35,
+				"FogColor": [0.05, 0.055, 0.07],
+				"FogEnd": 600,
+				"FogStart": 120
+			}
+		},
+		"SoundService": {
+			"$properties": {
+				"AmbientReverb": "Hallway",
+				"RespectFilteringEnabled": true,
+				"RolloffScale": 1
+			}
+		},
+		"StarterGui": {
+			"$properties": {
+				"ResetPlayerGuiOnSpawn": false
+			}
+		}
+	}
+}

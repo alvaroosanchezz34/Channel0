@@ -1,0 +1,8 @@
+# Build outputs
+/build/
+*.rbxl
+*.rbxlx
+*.rbxl.lock
+sourcemap.json
+/tools/bin/
+.DS_Store
