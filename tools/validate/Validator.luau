@@ -1,6 +1,6 @@
 --[[
-	Placement validator for the generated station. Run as part of `lune run tools/build/build`
-	and of the test suite. Checks:
+	Placement validator for the generated station. Runs on every `lune run tools/build/build`
+	(and alone with `-- --check`). Checks:
 	  * props intersecting walls/other props (penetration > tolerance, flush contact allowed)
 	  * props hovering just above the floor (classic "floating furniture")
 	  * door clearances (nothing solid in front of or behind a doorway)
