@@ -765,9 +765,10 @@ local function format(template: string, vars: { [string]: any }?): string
 	if not vars then
 		return template
 	end
+	local values: { [string]: any } = vars
 	return (
 		string.gsub(template, "{(%w+)}", function(name)
-			local value = vars[name]
+			local value = values[name]
 			if value == nil then
 				return "{" .. name .. "}"
 			end

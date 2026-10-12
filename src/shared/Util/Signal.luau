@@ -54,7 +54,7 @@ end
 
 function Signal:Fire(...: any)
 	-- Copy so handlers that disconnect during dispatch do not shift the iteration.
-	local snapshot = table.clone(self._handlers)
+	local snapshot: { any } = table.clone(self._handlers)
 	for _, handler in snapshot do
 		if handler.connected then
 			local ok, err = pcall(handler.fn, ...)

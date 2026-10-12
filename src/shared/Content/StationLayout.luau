@@ -502,12 +502,12 @@ function StationLayout.roomKeyAt(floorId: FloorId, cx: number, cz: number): stri
 end
 
 function StationLayout.floorAtHeight(y: number): FloorId
-	return if y < -3 then "Basement" else "Ground"
+	return (if y < -3 then "Basement" else "Ground") :: FloorId
 end
 
 -- Returns the zone id at a world position ("Exterior" outside the building).
 function StationLayout.zoneAt(x: number, y: number, z: number): string
-	local floorId = StationLayout.floorAtHeight(y)
+	local floorId: FloorId = StationLayout.floorAtHeight(y)
 	local cx, cz = StationLayout.worldToCell(x, z)
 	local key = StationLayout.roomKeyAt(floorId, cx, cz)
 	if not key then
@@ -527,7 +527,8 @@ function StationLayout.zoneBounds(zone: string): {
 	y: number,
 	height: number,
 }?
-	for floorId, floor in StationLayout.Floors do
+	for floorId, floorAny in StationLayout.Floors do
+		local floor: any = floorAny
 		local minX, maxX, minZ, maxZ = math.huge, -math.huge, math.huge, -math.huge
 		local height = 0
 		for cz, row in floor.rows do

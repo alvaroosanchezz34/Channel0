@@ -51,7 +51,8 @@ local function factsSatisfied(requires: { string }?, facts: { [string]: boolean 
 	if not requires then
 		return true
 	end
-	for _, requirement in requires do
+	local list: { string } = requires
+	for _, requirement in list do
 		if string.sub(requirement, 1, 1) == "!" then
 			if facts[string.sub(requirement, 2)] then
 				return false

@@ -94,7 +94,7 @@ local function startCycle(machine: Machine, events: { MachineEvent })
 end
 
 local function enter(machine: Machine, to: AnchorState, reason: string, ctx: Context, events: { MachineEvent })
-	local from = machine.state
+	local from: AnchorState = machine.state
 	assert(AnchorMachine.canTransition(from, to), `illegal anchor transition {from} -> {to}`)
 	machine.state = to
 	machine.timeInState = 0
