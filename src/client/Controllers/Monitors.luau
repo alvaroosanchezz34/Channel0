@@ -9,6 +9,7 @@
 ]]
 
 local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
@@ -245,6 +246,11 @@ end
 
 local function collect()
 	local index = 0
+	-- The screens live in PlayerGui and are adorned to the monitor parts: a SurfaceGui parented
+	-- under Workspace would put every ViewportFrame's cloned geometry into the physical world.
+	local folder = Instance.new("Folder")
+	folder.Name = "CH0Monitors"
+	folder.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
 	for _, model in CollectionService:GetTagged("Monitor") do
 		if model:IsA("Model") then
 			local screen = model:FindFirstChild("Screen")
@@ -259,7 +265,7 @@ local function collect()
 					Brightness = 1.4,
 					Adornee = screen,
 					Enabled = false,
-					Parent = screen,
+					Parent = folder,
 				})
 				local holder = Make.new("Frame", {
 					Size = UDim2.fromScale(1, 1),

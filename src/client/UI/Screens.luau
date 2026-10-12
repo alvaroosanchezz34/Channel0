@@ -194,6 +194,25 @@ local function viewport(
 	return frame, camera
 end
 
+-- Viewport content must never touch the physical world, even if a ViewportFrame ends up under
+-- Workspace: no collisions, queries or touch events, and nothing simulated.
+local function inert(root: Instance)
+	for _, d in root:GetDescendants() do
+		if d:IsA("BasePart") then
+			d.Anchored = true
+			d.CanCollide = false
+			d.CanQuery = false
+			d.CanTouch = false
+		end
+	end
+	if root:IsA("BasePart") then
+		root.Anchored = true
+		root.CanCollide = false
+		root.CanQuery = false
+		root.CanTouch = false
+	end
+end
+
 local function anchorClone(): Model?
 	local assets = ReplicatedStorage:FindFirstChild("Assets")
 	local template = assets and assets:FindFirstChild("Anchor")
@@ -206,6 +225,7 @@ local function anchorClone(): Model?
 			d:Destroy()
 		end
 	end
+	inert(clone)
 	return clone
 end
 
@@ -231,6 +251,7 @@ function Screens.scene(parent: Instance, sceneName: string, anchor: string?, tur
 		(template:GetAttribute("LightDirection") :: Vector3?) or Vector3.new(-0.3, -1, 0.6)
 	)
 	local set = template:Clone()
+	inert(set)
 	local cam = set:FindFirstChild("Cam")
 	if cam and cam:IsA("BasePart") then
 		camera.CFrame = cam.CFrame
@@ -311,6 +332,7 @@ local function buildGeometry(camId: number, camPart: BasePart): Model
 			end
 		end
 	end
+	inert(model)
 	geometryCache[camId] = model
 	return model
 end
@@ -329,6 +351,7 @@ local function proxy(color: Color3): Model
 	})
 	body.CFrame = CFrame.new()
 	m.PrimaryPart = body
+	inert(m)
 	return m
 end
 
