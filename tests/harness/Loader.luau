@@ -144,13 +144,15 @@ function Loader.requireNode(node: any): any
 			end
 			return require(target)
 		end,
-	}, { __index = function(_, key)
-		local value = globals[key]
-		if value ~= nil then
-			return value
-		end
-		return (getfenv :: any)(0)[key]
-	end })
+	}, {
+		__index = function(_, key)
+			local value = globals[key]
+			if value ~= nil then
+				return value
+			end
+			return (getfenv :: any)(0)[key]
+		end,
+	})
 	local chunk = luau.load(source, { debugName = path, environment = env })
 	local result = chunk()
 	loading[path] = nil

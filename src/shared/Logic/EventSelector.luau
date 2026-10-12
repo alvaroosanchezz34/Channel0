@@ -51,7 +51,8 @@ local function factsSatisfied(requires: { string }?, facts: { [string]: boolean 
 	if not requires then
 		return true
 	end
-	for _, requirement in requires do
+	local list: { string } = requires
+	for _, requirement in list do
 		if string.sub(requirement, 1, 1) == "!" then
 			if facts[string.sub(requirement, 2)] then
 				return false
@@ -114,7 +115,12 @@ function EventSelector.eligible(selector: Selector, def: EventDef, ctx: Context)
 end
 
 -- Picks among eligible events of the given tiers (all tiers when nil).
-function EventSelector.choose(selector: Selector, ctx: Context, rng: SeededRandom.SeededRandom, tiers: { string }?): EventDef?
+function EventSelector.choose(
+	selector: Selector,
+	ctx: Context,
+	rng: SeededRandom.SeededRandom,
+	tiers: { string }?
+): EventDef?
 	local candidates: { EventDef } = {}
 	for _, def in selector.defs do
 		if (not tiers or table.find(tiers, def.tier)) and EventSelector.eligible(selector, def, ctx) then

@@ -8,14 +8,7 @@ export type SessionState = "Lobby" | "Intro" | "Running" | "Ending" | "Results" 
 -- Narrative phases while the session is Running. Only PhaseService changes these.
 export type Phase = "Arrival" | "Maintenance" | "Anomaly" | "Escalation" | "Crisis" | "Finale"
 
-export type AnchorState =
-	"Dormant"
-	| "Broadcast"
-	| "Observing"
-	| "Displacement"
-	| "Manifestation"
-	| "Hunt"
-	| "Withdrawal"
+export type AnchorState = "Dormant" | "Broadcast" | "Observing" | "Displacement" | "Manifestation" | "Hunt" | "Withdrawal"
 
 -- What the master switcher puts on air.
 export type ProgramSource = "Bars" | "Studio" | "VTR" | "Slate" | "Channel0"

@@ -268,10 +268,16 @@ return function(T)
 			expect(m.state ~= "Hunt").toBeTruthy()
 		end)
 
-		it("rejects illegal forced transitions", function()
+		it("forces a jump through legal transitions only", function()
 			local m = AnchorMachine.new(SeededRandom.new(5))
-			local events, err = AnchorMachine.force(m, "Hunt", ctx(), "test")
-			expect(events).toBe(nil)
+			local events = AnchorMachine.force(m, "Hunt", ctx(), "test")
+			expect(events ~= nil).toBeTruthy()
+			expect(m.state).toBe("Hunt")
+			for _, step in m.history do
+				expect(AnchorMachine.canTransition(step.from, step.to)).toBeTruthy()
+			end
+			local again, err = AnchorMachine.force(m, "Hunt", ctx(), "test")
+			expect(again).toBe(nil)
 			expect(err ~= nil).toBeTruthy()
 		end)
 
@@ -280,12 +286,16 @@ return function(T)
 			local phases = { "Anomaly", "Escalation", "Crisis" }
 			for _, phase in phases do
 				for i = 1, 3000 do
-					AnchorMachine.step(m, 0.1, ctx({
-						phase = phase,
-						pressure = if phase == "Crisis" then 0.8 else 0.45,
-						caught = i % 400 == 0,
-						slateActive = i % 777 < 20,
-					}))
+					AnchorMachine.step(
+						m,
+						0.1,
+						ctx({
+							phase = phase,
+							pressure = if phase == "Crisis" then 0.8 else 0.45,
+							caught = i % 400 == 0,
+							slateActive = i % 777 < 20,
+						})
+					)
 				end
 			end
 			for _, edge in m.history do
@@ -294,7 +304,15 @@ return function(T)
 		end)
 
 		it("pressure grows with phase and channel 0", function()
-			local base = { phase = "Escalation", phaseProgress = 0.5, channel0OnAir = false, deadAir = false, carrierDrops = 0, isolation = 0, aggression = 1 }
+			local base = {
+				phase = "Escalation",
+				phaseProgress = 0.5,
+				channel0OnAir = false,
+				deadAir = false,
+				carrierDrops = 0,
+				isolation = 0,
+				aggression = 1,
+			}
 			local p1 = AnchorMachine.pressure(base)
 			base.channel0OnAir = true
 			local p2 = AnchorMachine.pressure(base)
@@ -347,7 +365,14 @@ return function(T)
 
 	describe("EventSelector", function()
 		local function context(now, phase, facts)
-			return { now = now, phase = phase, facts = facts or {}, anchorState = "Observing", hasIsolated = false, blocked = false }
+			return {
+				now = now,
+				phase = phase,
+				facts = facts or {},
+				anchorState = "Observing",
+				hasIsolated = false,
+				blocked = false,
+			}
 		end
 
 		it("respects phase windows", function()
@@ -417,7 +442,8 @@ return function(T)
 			expect(met).toBeTruthy()
 		end)
 		it("full broadcast needs every clue step", function()
-			local facts = { phaseCrisis = true, allClueTapesViewed = true, lostFrequencyLocked = true, masterInMCR = true }
+			local facts =
+				{ phaseCrisis = true, allClueTapesViewed = true, lostFrequencyLocked = true, masterInMCR = true }
 			expect(EndingEvaluator.check("FullBroadcast", facts)).toBeFalsy()
 			facts.channel0OnAir = true
 			expect(EndingEvaluator.check("FullBroadcast", facts)).toBeTruthy()

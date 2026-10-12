@@ -84,6 +84,15 @@ Strings.en = {
 	["ui.deadAir"] = "DEAD AIR",
 	["ui.onAir"] = "ON AIR",
 	["ui.signal"] = "SIGNAL",
+	["ui.lobbyHint"] = "Wait in the parking lot. When everyone is ready, the shift begins.",
+	["ui.duration"] = "SHIFT LENGTH {time}",
+	["ui.crewTonight"] = "TONIGHT'S CREW",
+	["ui.keyHints"] = "F light · Shift run · E use · Backspace step away",
+	["ui.debug"] = "DEBUG (AUTHORIZED)",
+	["intro.1"] = "KZRO-TV · MARROW FALLS, MONTANA",
+	["intro.2"] = "OCTOBER 16, 1998 · 11:40 PM",
+	["intro.3"] = "Overnight engineering shift. Keep the station on the air until 6:00 AM.",
+	["intro.4"] = "Do not leave dead air.",
 
 	-- Settings
 	["set.title"] = "SETTINGS",
@@ -474,6 +483,15 @@ Strings.es = {
 	["ui.deadAir"] = "SIN SEÑAL",
 	["ui.onAir"] = "EN EL AIRE",
 	["ui.signal"] = "SEÑAL",
+	["ui.lobbyHint"] = "Espera en el aparcamiento. Cuando todos estéis listos, empieza el turno.",
+	["ui.duration"] = "DURACIÓN DEL TURNO {time}",
+	["ui.crewTonight"] = "EQUIPO DE ESTA NOCHE",
+	["ui.keyHints"] = "F luz · Shift correr · E usar · Retroceso apartarse",
+	["ui.debug"] = "DEPURACIÓN (AUTORIZADO)",
+	["intro.1"] = "KZRO-TV · MARROW FALLS, MONTANA",
+	["intro.2"] = "16 DE OCTUBRE DE 1998 · 23:40",
+	["intro.3"] = "Turno de ingeniería nocturno. Mantén la estación en el aire hasta las 6:00.",
+	["intro.4"] = "No dejes aire muerto.",
 
 	["set.title"] = "OPCIONES",
 	["set.master"] = "Volumen general",
@@ -600,6 +618,24 @@ Strings.es = {
 	["end.cut.tv"] = "VOLVEMOS ENSEGUIDA",
 	["end.full.last"] = "Y por último esta noche... el equipo nocturno de KZRO se despide. Buenas noches, Marrow Falls.",
 	["end.anchor.line"] = "Buenas noches. Esto es Night Desk.",
+	["evt.distant_light_failure"] = "Las luces fallan en una sala lejana y vacía",
+	["evt.monitor_blink"] = "Un monitor muestra a THE ANCHOR durante una fracción de segundo",
+	["evt.whisper_empty_room"] = "Una voz apenas audible desde una sala vecina vacía",
+	["evt.door_changed"] = "Una puerta lejana cambia de estado",
+	["evt.footsteps_empty"] = "Pasos en una sala vecina vacía",
+	["evt.phone_rings"] = "Suena el teléfono de recepción",
+	["evt.impossible_broadcast"] = "Los monitores muestran al equipo desde un ángulo imposible, con la hora adelantada",
+	["evt.figure_hall_end"] = "THE ANCHOR está al final de un pasillo",
+	["evt.personal_broadcast"] = "Un jugador aislado se ve a sí mismo en un monitor",
+	["evt.radio_future"] = "La radio predice lo que va a pasar",
+	["evt.tape_extra_voice"] = "Una cinta en reproducción gana una frase que nunca tuvo",
+	["evt.studio_b_unsealed"] = "El Estudio B aparece abierto",
+	["evt.blackout_wing"] = "Un ala se queda sin corriente",
+	["evt.fault_panel_a"] = "Salta el panel A",
+	["evt.fault_panel_b"] = "Salta el panel B",
+	["evt.fault_tuning_drift"] = "El excitador se desvía de la portadora",
+	["evt.fault_vtr_jam"] = "El magnetoscopio de MCR expulsa la cinta",
+	["evt.fault_camera_offline"] = "Una cámara se queda sin señal",
 
 	["req.phaseCrisis"] = "Debe ser después de las 04:00",
 	["req.hasKillKey"] = "Lleva la llave de la portadora",
@@ -761,17 +797,24 @@ Strings.es = {
 	["num.4"] = "cuatro técnicos",
 }
 
-local function format(template: string, vars: { [string]: any }?): string
+local function format(template: string, vars: { [string]: any }?, resolve: (string) -> string): string
 	if not vars then
 		return template
 	end
-	return (string.gsub(template, "{(%w+)}", function(name)
-		local value = vars[name]
-		if value == nil then
-			return "{" .. name .. "}"
-		end
-		return tostring(value)
-	end))
+	local values: { [string]: any } = vars
+	return (
+		string.gsub(template, "{(%w+)}", function(name)
+			local value = values[name]
+			if value == nil then
+				return "{" .. name .. "}"
+			end
+			-- "@some.key" values are themselves localised (the server sends keys, not prose).
+			if type(value) == "string" and string.sub(value, 1, 1) == "@" then
+				return resolve(string.sub(value, 2))
+			end
+			return tostring(value)
+		end)
+	)
 end
 
 function Strings.languageFor(localeId: string?): "en" | "es"
@@ -787,7 +830,9 @@ function Strings.get(language: string, key: string, vars: { [string]: any }?): s
 	if not template then
 		return key
 	end
-	return format(template, vars)
+	return format(template, vars, function(inner: string): string
+		return Strings.get(language, inner, nil)
+	end)
 end
 
 return Strings

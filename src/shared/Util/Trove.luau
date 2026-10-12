@@ -74,7 +74,10 @@ function Trove.Clean(self: Trove)
 	local items = self._items
 	self._items = {}
 	for index = #items, 1, -1 do
-		local ok, err = pcall(release, items[index])
+		local item = items[index]
+		local ok: boolean, err: any = pcall(function()
+			release(item)
+		end)
 		if not ok then
 			warn("[Trove] cleanup error:", err)
 		end

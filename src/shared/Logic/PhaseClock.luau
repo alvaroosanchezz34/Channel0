@@ -9,7 +9,12 @@ local PhaseClock = {}
 export type PhaseTiming = { startClock: number, cap: number, rate: number }
 
 -- Returns the new clock and whether the phase cap has been reached.
-function PhaseClock.advance(clock: number, timing: PhaseTiming, dt: number, objectivesComplete: boolean): (number, boolean)
+function PhaseClock.advance(
+	clock: number,
+	timing: PhaseTiming,
+	dt: number,
+	objectivesComplete: boolean
+): (number, boolean)
 	local nextClock = clock + timing.rate * dt
 	if nextClock >= timing.cap then
 		if objectivesComplete then

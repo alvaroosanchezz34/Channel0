@@ -94,7 +94,7 @@ local function startCycle(machine: Machine, events: { MachineEvent })
 end
 
 local function enter(machine: Machine, to: AnchorState, reason: string, ctx: Context, events: { MachineEvent })
-	local from = machine.state
+	local from: AnchorState = machine.state
 	assert(AnchorMachine.canTransition(from, to), `illegal anchor transition {from} -> {to}`)
 	machine.state = to
 	machine.timeInState = 0
@@ -109,13 +109,15 @@ local function enter(machine: Machine, to: AnchorState, reason: string, ctx: Con
 	if to == "Observing" then
 		machine.stateDuration = roll(machine.rng, AnchorConfig.ObserveDuration) * scale / math.max(0.5, ctx.aggression)
 	elseif to == "Displacement" then
-		machine.cyclesLeft = machine.rng:NextInteger(AnchorConfig.DisplacementCycles[1], AnchorConfig.DisplacementCycles[2])
+		machine.cyclesLeft =
+			machine.rng:NextInteger(AnchorConfig.DisplacementCycles[1], AnchorConfig.DisplacementCycles[2])
 		machine.stateDuration = math.huge
 	elseif to == "Manifestation" then
 		machine.stateDuration = AnchorConfig.ManifestMaxDuration
 	elseif to == "Hunt" then
 		machine.telegraphing = true
-		machine.stateDuration = AnchorConfig.HuntTelegraph + roll(machine.rng, AnchorConfig.HuntDuration) * ctx.aggression
+		machine.stateDuration = AnchorConfig.HuntTelegraph
+			+ roll(machine.rng, AnchorConfig.HuntDuration) * ctx.aggression
 	elseif to == "Withdrawal" then
 		local crisis = ctx.phase == "Crisis"
 		machine.stateDuration = roll(machine.rng, AnchorConfig.WithdrawalDuration) * (if crisis then 0.6 else 1)
@@ -178,7 +180,8 @@ function AnchorMachine.step(machine: Machine, dt: number, ctx: Context): { Machi
 	elseif state == "Manifestation" then
 		if ctx.slateActive then
 			enter(machine, "Withdrawal", "Slate", ctx, events)
-		elseif t >= AnchorConfig.ManifestMinDuration
+		elseif
+			t >= AnchorConfig.ManifestMinDuration
 			and machine.huntCooldown <= 0
 			and ctx.hasTarget
 			and (ctx.phase == "Crisis" or ctx.deadAir or ctx.pressure >= AnchorConfig.HuntPressure)
@@ -231,12 +234,52 @@ function AnchorMachine.isPhysical(machine: Machine): boolean
 end
 
 -- Debug/scripted transition along a legal edge only.
-function AnchorMachine.force(machine: Machine, to: AnchorState, ctx: Context, reason: string): ({ MachineEvent }?, string?)
-	if not AnchorMachine.canTransition(machine.state, to) then
+-- Shortest chain of legal transitions from `from` to `to` (excluding `from`), or nil.
+function AnchorMachine.pathTo(from: string, to: string): { string }?
+	if from == to then
+		return nil
+	end
+	local previous: { [string]: string } = { [from] = from }
+	local queue = { from }
+	local head = 1
+	while queue[head] do
+		local state = queue[head]
+		head += 1
+		local allowed: { [string]: boolean } = AnchorMachine.Allowed[state] or {}
+		for next in allowed do
+			if previous[next] == nil then
+				previous[next] = state
+				if next == to then
+					local path = { to }
+					local cursor = state
+					while cursor ~= from do
+						table.insert(path, 1, cursor)
+						cursor = previous[cursor]
+					end
+					return path
+				end
+				table.insert(queue, next)
+			end
+		end
+	end
+	return nil
+end
+
+-- Debug/test jump: walks the shortest legal chain so every intermediate state's entry logic runs.
+function AnchorMachine.force(
+	machine: Machine,
+	to: AnchorState,
+	ctx: Context,
+	reason: string
+): ({ MachineEvent }?, string?)
+	local path = AnchorMachine.pathTo(machine.state, to)
+	if not path then
 		return nil, `cannot go from {machine.state} to {to}`
 	end
 	local events: { MachineEvent } = {}
-	enter(machine, to, reason, ctx, events)
+	for _, state in path do
+		enter(machine, state :: AnchorState, reason, ctx, events)
+	end
 	return events, nil
 end
 

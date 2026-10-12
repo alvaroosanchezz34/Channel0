@@ -25,16 +25,79 @@ local Objectives = {}
 
 Objectives.Defs = {
 	-- Arrival
-	{ id = "signin", phase = "Arrival", textKey = "obj.signin", hintKey = "hint.signin", goal = 1, blocking = true, fact = "signedIn" },
-	{ id = "reach_mcr", phase = "Arrival", textKey = "obj.reach_mcr", hintKey = "hint.reach_mcr", goal = 1, blocking = true, fact = "reachedMCR" },
-	{ id = "power_console", phase = "Arrival", textKey = "obj.power_console", hintKey = "hint.power_console", goal = 1, blocking = true, fact = "consolePowered" },
-	{ id = "watch_orientation", phase = "Arrival", textKey = "obj.watch_orientation", goal = 1, blocking = false, fact = "orientationViewed" },
+	{
+		id = "signin",
+		phase = "Arrival",
+		textKey = "obj.signin",
+		hintKey = "hint.signin",
+		goal = 1,
+		blocking = true,
+		fact = "signedIn",
+	},
+	{
+		id = "reach_mcr",
+		phase = "Arrival",
+		textKey = "obj.reach_mcr",
+		hintKey = "hint.reach_mcr",
+		goal = 1,
+		blocking = true,
+		fact = "reachedMCR",
+	},
+	{
+		id = "power_console",
+		phase = "Arrival",
+		textKey = "obj.power_console",
+		hintKey = "hint.power_console",
+		goal = 1,
+		blocking = true,
+		fact = "consolePowered",
+	},
+	{
+		id = "watch_orientation",
+		phase = "Arrival",
+		textKey = "obj.watch_orientation",
+		goal = 1,
+		blocking = false,
+		fact = "orientationViewed",
+	},
 
 	-- Maintenance
-	{ id = "tune_carrier", phase = "Maintenance", textKey = "obj.tune_carrier", hintKey = "hint.tune_carrier", goal = 1, blocking = true, fact = "carrierTuned" },
-	{ id = "panel_a", phase = "Maintenance", textKey = "obj.panel_a", hintKey = "hint.panel_a", goal = 1, blocking = true, fact = "panelAReset" },
-	{ id = "panel_b", phase = "Maintenance", textKey = "obj.panel_b", hintKey = "hint.panel_b", goal = 1, blocking = true, fact = "panelBReset" },
-	{ id = "load_filler", phase = "Maintenance", textKey = "obj.load_filler", hintKey = "hint.load_filler", goal = 1, blocking = true, fact = "fillerOnAir" },
+	{
+		id = "tune_carrier",
+		phase = "Maintenance",
+		textKey = "obj.tune_carrier",
+		hintKey = "hint.tune_carrier",
+		goal = 1,
+		blocking = true,
+		fact = "carrierTuned",
+	},
+	{
+		id = "panel_a",
+		phase = "Maintenance",
+		textKey = "obj.panel_a",
+		hintKey = "hint.panel_a",
+		goal = 1,
+		blocking = true,
+		fact = "panelAReset",
+	},
+	{
+		id = "panel_b",
+		phase = "Maintenance",
+		textKey = "obj.panel_b",
+		hintKey = "hint.panel_b",
+		goal = 1,
+		blocking = true,
+		fact = "panelBReset",
+	},
+	{
+		id = "load_filler",
+		phase = "Maintenance",
+		textKey = "obj.load_filler",
+		hintKey = "hint.load_filler",
+		goal = 1,
+		blocking = true,
+		fact = "fillerOnAir",
+	},
 	{
 		id = "check_cameras",
 		phase = "Maintenance",
@@ -47,16 +110,54 @@ Objectives.Defs = {
 	},
 
 	-- Anomaly (scripted; completes itself when the 02:17 broadcast ends)
-	{ id = "witness", phase = "Anomaly", textKey = "obj.witness", goal = 1, blocking = true, fact = "anomalyWitnessed" },
+	{
+		id = "witness",
+		phase = "Anomaly",
+		textKey = "obj.witness",
+		goal = 1,
+		blocking = true,
+		fact = "anomalyWitnessed",
+	},
 
 	-- Escalation
 	{ id = "keep_air", phase = "Escalation", textKey = "obj.keep_air", goal = 1, blocking = false, condition = true },
-	{ id = "find_source", phase = "Escalation", textKey = "obj.find_source", hintKey = "hint.find_source", goal = 3, blocking = true, counter = "clueTapesViewed" },
-	{ id = "studio_b", phase = "Escalation", textKey = "obj.studio_b", hintKey = "hint.studio_b", goal = 1, blocking = true, fact = "studioBEntered" },
+	{
+		id = "find_source",
+		phase = "Escalation",
+		textKey = "obj.find_source",
+		hintKey = "hint.find_source",
+		goal = 3,
+		blocking = true,
+		counter = "clueTapesViewed",
+	},
+	{
+		id = "studio_b",
+		phase = "Escalation",
+		textKey = "obj.studio_b",
+		hintKey = "hint.studio_b",
+		goal = 1,
+		blocking = true,
+		fact = "studioBEntered",
+	},
 
 	-- Crisis
-	{ id = "keep_air_crisis", phase = "Crisis", textKey = "obj.keep_air", goal = 1, blocking = false, condition = true },
-	{ id = "decide", phase = "Crisis", textKey = "obj.decide", hintKey = "hint.decide", goal = 1, blocking = true, fact = "endingChosen" },
+	{
+		id = "keep_air_crisis",
+		phase = "Crisis",
+		textKey = "obj.keep_air",
+		goal = 1,
+		blocking = false,
+		condition = true,
+	},
+	{
+		id = "decide",
+		phase = "Crisis",
+		textKey = "obj.decide",
+		hintKey = "hint.decide",
+		goal = 1,
+		blocking = true,
+		fact = "endingChosen",
+	},
 } :: { ObjectiveDef }
 
 return Objectives
