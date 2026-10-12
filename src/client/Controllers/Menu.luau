@@ -426,7 +426,7 @@ local function build()
 	lobbyCountdown = Make.text({ Text = "", TextColor3 = Theme.Colors.Green, LayoutOrder = 3, Parent = lobbyFrame })
 	Make.text({
 		Name = "Hint",
-		Text = t("ui.lobbyHint"),
+		Text = t("ui.lobbyHint") .. "\n" .. t("ui.keyHints"),
 		TextSize = 14,
 		TextColor3 = Theme.Colors.TextDim,
 		AutomaticSize = Enum.AutomaticSize.Y,
@@ -605,7 +605,7 @@ local function relabel()
 	end
 	local hint = lobbyFrame:FindFirstChild("Hint") :: TextLabel?
 	if hint then
-		hint.Text = t("ui.lobbyHint")
+		hint.Text = t("ui.lobbyHint") .. "\n" .. t("ui.keyHints")
 	end
 	local title = settingsFrame:FindFirstChild("Title") :: TextLabel?
 	if title then
