@@ -7,5 +7,5 @@ set -euo pipefail
 LUAU_LSP="${LUAU_LSP:-luau-lsp}"
 DEFS="${DEFS:-globalTypes.d.luau}"
 rojo sourcemap default.project.json -o sourcemap.json
-"$LUAU_LSP" analyze --platform roblox --sourcemap sourcemap.json --definitions "$DEFS" \
+"$LUAU_LSP" analyze --platform roblox --sourcemap sourcemap.json --definitions "$DEFS" --definitions types/extra.d.luau \
 	--flag:LuauTinyControlFlowAnalysis=true src

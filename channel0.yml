@@ -87,3 +87,5 @@ globals:
     any: true
   buffer:
     any: true
+  Content:
+    any: true

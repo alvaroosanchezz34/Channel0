@@ -45,7 +45,7 @@ local function def(
 	}
 end
 
-AudioConfig.Sounds = {
+local Sounds: { [string]: SoundDef } = {
 	-- Ambience layers (2D beds; mixed by zone)
 	StationHum = def("amb_station_hum.ogg", "Ambience", 0.32, true, true),
 	Ventilation = def("amb_ventilation.ogg", "Ambience", 0.28, true, true),
@@ -96,9 +96,10 @@ AudioConfig.Sounds = {
 	StingerLow = def("sting_low.ogg", "Stinger", 0.5, false, false),
 	StingerReveal = def("sting_reveal.ogg", "Stinger", 0.45, false, false),
 }
+AudioConfig.Sounds = Sounds
 
 -- Mixer group volumes (multiplied by the player's master volume setting).
-AudioConfig.Groups = {
+local Groups: { [string]: number } = {
 	Ambience = 1.0,
 	Signal = 0.9,
 	Anchor = 1.0,
@@ -107,6 +108,7 @@ AudioConfig.Groups = {
 	Stinger = 0.85,
 	Voice = 1.0,
 }
+AudioConfig.Groups = Groups
 
 -- Seconds for ambience crossfades. Silence is a tool: fades are slow on purpose.
 AudioConfig.AmbienceFade = 3.5

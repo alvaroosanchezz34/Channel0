@@ -160,8 +160,7 @@ function Debug.init()
 	if not enabled then
 		return
 	end
-	local remote = Remotes.createDebugRemote()
-	local _ = remote
+	Remotes.createDebugRemote()
 	Remotes.on(Net.DebugRemote, function(player, command, arg)
 		if not Debug.isAuthorized(player) then
 			return
