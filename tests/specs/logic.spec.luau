@@ -268,10 +268,16 @@ return function(T)
 			expect(m.state ~= "Hunt").toBeTruthy()
 		end)
 
-		it("rejects illegal forced transitions", function()
+		it("forces a jump through legal transitions only", function()
 			local m = AnchorMachine.new(SeededRandom.new(5))
-			local events, err = AnchorMachine.force(m, "Hunt", ctx(), "test")
-			expect(events).toBe(nil)
+			local events = AnchorMachine.force(m, "Hunt", ctx(), "test")
+			expect(events ~= nil).toBeTruthy()
+			expect(m.state).toBe("Hunt")
+			for _, step in m.history do
+				expect(AnchorMachine.canTransition(step.from, step.to)).toBeTruthy()
+			end
+			local again, err = AnchorMachine.force(m, "Hunt", ctx(), "test")
+			expect(again).toBe(nil)
 			expect(err ~= nil).toBeTruthy()
 		end)
 

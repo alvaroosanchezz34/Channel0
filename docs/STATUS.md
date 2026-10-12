@@ -4,16 +4,28 @@ Leyenda: **IMPLEMENTADO** = el código está escrito y pasa las comprobaciones e
 **PROBADO** = verificado con una ejecución real (tests offline, validador, build).
 **PENDIENTE** = falta hacerlo o verificarlo. **BLOQUEADO** = no se puede hacer desde aquí.
 
-Nada se ha ejecutado dentro de Roblox Studio ni en un servidor de Roblox: este entorno no tiene
-Studio. Ninguna parte de la experiencia de juego está validada jugando.
+El 12/10/2026 se probó una partida individual en el Roblox Studio de Koke a través del MCP de
+Studio (sin audio subido y sin cooperativo). Lo recorrido está marcado como **PROBADO EN STUDIO**;
+el resto sigue sin validar jugando.
 
 ## 1. Estado real del juego
 
-El juego está completo en código: mapa, servidor, cliente, contenido en inglés y español, audio
-original y documentación. Pasan los 51 tests offline, el validador del mapa, selene, StyLua,
-luau-lsp en modo estricto sobre todo `src` y `rojo build`. **PENDIENTE**: la primera sesión en
-Studio, donde seguramente aparecerán errores de tiempo de ejecución y de ajuste que el análisis
-estático no detecta.
+El juego está completo en código y es jugable en solitario en Studio. Pasan los 51 tests offline,
+el validador del mapa, selene, StyLua, luau-lsp en modo estricto y `rojo build`.
+
+**PROBADO EN STUDIO** (partida individual): título, opciones, lobby y "Listo", intro, fichar en
+recepción, llegar al control central, encender el mezclador, sintonizar y fijar la portadora,
+rearmar los cuadros A y B en su orden, coger la cinta de relleno, cargarla en el magnetoscopio y
+ponerla al aire, revisar cámaras en la consola, la anomalía de las 02:17, una caza de THE ANCHOR
+con captura, la segunda oportunidad en solitario, el final "Señal perdida", resultados y vuelta al
+lobby. Sin errores en la consola.
+
+Errores encontrados en Studio y corregidos: los monitores metían geometría con colisión en el
+mundo y empujaban al jugador (incluso a través de paredes); el ratón quedaba bloqueado en primera
+persona y no se podían pulsar los paneles; las teclas del sintonizador movían al personaje y E
+reabría el dispositivo; la cámara podía quedarse congelada tras la intro; el contador de cámaras
+mostraba `{progress}`; los subtítulos no caducaban fuera del turno; el panel F8 no podía forzar la
+caza desde cualquier estado.
 
 ## 2. Sistemas implementados
 
@@ -96,14 +108,15 @@ y Señal perdida. Requisitos en [NARRATIVE.md](NARRATIVE.md).
 | luau-lsp 1.32.1, `--!strict` en todo `src` | 0 errores |
 | `rojo build` | genera el lugar (290 KB) |
 | Generador de audio | 38 archivos, ninguno en silencio ni saturado |
-| Roblox Studio | **BLOQUEADO** aquí: no hay Studio en este entorno |
+| Roblox Studio (MCP, partida individual) | recorrido completo de una noche hasta un final, ver sección 1 |
 
 El test de contenido encontró 18 descripciones de eventos sin traducir al español; están
 corregidas.
 
 ## 10. Errores conocidos
 
-- Sin probar en Studio: es probable que haya errores de ejecución no detectados.
+- Sin probar en Studio: el cooperativo, los otros cuatro finales, el resto de eventos, móvil y
+  mando.
 - Sin ids de audio el juego está en silencio (los textos y subtítulos funcionan).
 - `EditableImage` puede no estar disponible en todas las cuentas o plataformas; entonces se usa
   el grano de respaldo, menos fino.
@@ -140,7 +153,7 @@ frecuencia, desconectar a un cliente a mitad de turno y unirse tarde.
 
 ## 15. Qué falta para publicar
 
-1. Primera sesión en Studio y corregir los errores de ejecución que salgan.
+1. Probar en Studio el cooperativo (2–4 jugadores) y los demás finales.
 2. Subir el audio y pegar los ids.
 3. Ajustar tiempos (fases, cazas, fallos) y la intensidad del filtro tras jugar varias partidas.
 4. Pruebas de rendimiento en móvil y de 4 jugadores.

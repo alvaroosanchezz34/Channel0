@@ -2,8 +2,9 @@
 
 ## Qué se ha comprobado y cómo
 
-Todo lo siguiente se ejecuta fuera de Roblox Studio (Linux, sin Studio). **Nada de este proyecto
-se ha ejecutado todavía dentro de Roblox Studio ni en un servidor de Roblox.**
+Todo lo siguiente se ejecuta fuera de Roblox Studio (Linux, sin Studio). Además, una partida
+individual completa se probó en Roblox Studio a través del MCP de Studio (ver
+[STATUS.md](STATUS.md)); el cooperativo y un servidor real de Roblox siguen sin probar.
 
 | Comprobación | Comando | Cubre |
 |---|---|---|

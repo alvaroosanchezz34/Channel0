@@ -234,17 +234,52 @@ function AnchorMachine.isPhysical(machine: Machine): boolean
 end
 
 -- Debug/scripted transition along a legal edge only.
+-- Shortest chain of legal transitions from `from` to `to` (excluding `from`), or nil.
+function AnchorMachine.pathTo(from: string, to: string): { string }?
+	if from == to then
+		return nil
+	end
+	local previous: { [string]: string } = { [from] = from }
+	local queue = { from }
+	local head = 1
+	while queue[head] do
+		local state = queue[head]
+		head += 1
+		local allowed: { [string]: boolean } = AnchorMachine.Allowed[state] or {}
+		for next in allowed do
+			if previous[next] == nil then
+				previous[next] = state
+				if next == to then
+					local path = { to }
+					local cursor = state
+					while cursor ~= from do
+						table.insert(path, 1, cursor)
+						cursor = previous[cursor]
+					end
+					return path
+				end
+				table.insert(queue, next)
+			end
+		end
+	end
+	return nil
+end
+
+-- Debug/test jump: walks the shortest legal chain so every intermediate state's entry logic runs.
 function AnchorMachine.force(
 	machine: Machine,
 	to: AnchorState,
 	ctx: Context,
 	reason: string
 ): ({ MachineEvent }?, string?)
-	if not AnchorMachine.canTransition(machine.state, to) then
+	local path = AnchorMachine.pathTo(machine.state, to)
+	if not path then
 		return nil, `cannot go from {machine.state} to {to}`
 	end
 	local events: { MachineEvent } = {}
-	enter(machine, to, reason, ctx, events)
+	for _, state in path do
+		enter(machine, state :: AnchorState, reason, ctx, events)
+	end
 	return events, nil
 end
 

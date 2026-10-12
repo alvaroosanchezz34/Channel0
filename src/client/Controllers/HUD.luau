@@ -339,12 +339,19 @@ local function onCue(cue: { [string]: any })
 end
 
 local function update()
+	local now = os.clock()
+	-- Subtitles live in their own layer and must expire in every state (lobby, taken, ending).
+	for i = #subtitles, 1, -1 do
+		if now >= subtitles[i].untilTime then
+			subtitles[i].label:Destroy()
+			table.remove(subtitles, i)
+		end
+	end
 	local running = Net.state(Net.Attr.Session) == "Running" and Store.taken == nil
 	root.Visible = running
 	if not running then
 		return
 	end
-	local now = os.clock()
 	local signal = Store.signal
 	local q = (signal.quality or 0) / 100
 	signalBar.Size = UDim2.fromScale(q, 1)
@@ -372,12 +379,6 @@ local function update()
 	local title = objectivesFrame:FindFirstChild("Title") :: TextLabel?
 	if title then
 		title.Text = Store.t("ui.objective") .. (if Net.state(Net.Attr.Stalled) then "   ◷" else "")
-	end
-	for i = #subtitles, 1, -1 do
-		if now >= subtitles[i].untilTime then
-			subtitles[i].label:Destroy()
-			table.remove(subtitles, i)
-		end
 	end
 	local character = Players.LocalPlayer.Character
 	local stamina = character and character:GetAttribute("Stamina")

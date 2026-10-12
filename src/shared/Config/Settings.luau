@@ -18,8 +18,8 @@ export type Settings = {
 local Settings = {}
 
 Settings.Defaults = {
-	masterVolume = 0.8,
-	ambienceVolume = 0.8,
+	masterVolume = 0.75,
+	ambienceVolume = 0.75,
 	vhsProfile = "Default",
 	reduceMotion = false,
 	subtitles = true,
