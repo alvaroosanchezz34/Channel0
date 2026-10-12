@@ -107,8 +107,10 @@ local function renderObjectives()
 	for _, entry in list do
 		if not entry.condition or Net.state(Net.Attr.Phase) ~= "Arrival" then
 			order += 1
-			local text = Store.t(entry.textKey, { count = entry.progress, goal = entry.goal })
-			if entry.goal and entry.goal > 1 then
+			local text = Store.t(entry.textKey, { progress = entry.progress, goal = entry.goal })
+			-- Texts that already show "{progress}/{goal}" get no second counter.
+			local inline = string.find(Store.t(entry.textKey), "{progress}", 1, true) ~= nil
+			if entry.goal and entry.goal > 1 and not inline then
 				text ..= string.format("  %d/%d", entry.progress, entry.goal)
 			end
 			local prefix = if entry.done then "■ " elseif entry.condition then "◆ " else "□ "

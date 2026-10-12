@@ -6,7 +6,9 @@
 	as a fresh state. Nothing here decides an outcome.
 ]]
 
+local ContextActionService = game:GetService("ContextActionService")
 local Players = game:GetService("Players")
+local ProximityPromptService = game:GetService("ProximityPromptService")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
@@ -38,6 +40,45 @@ local localFrequency: number? = nil
 local lastTuneSent = 0
 local tuneDirty = false
 local dragging = false
+
+-- Panel keys (the tuner's A/D/Q/E/arrows). Set up in init.
+local panelKey: (keyCode: Enum.KeyCode) -> () = function() end
+
+-- While a panel is open, walking keys and the panel's own keys must not move the character or
+-- re-trigger the device's prompt: they are sunk here and handed to the panel.
+local HOLD_ACTION = "CH0DevicePanelHold"
+local function holdControls(on: boolean)
+	-- Prompts would otherwise take E (the tuner's coarse step) and reopen the device.
+	ProximityPromptService.Enabled = not on
+	if on then
+		ContextActionService:BindActionAtPriority(
+			HOLD_ACTION,
+			function(_, state: Enum.UserInputState, input: InputObject)
+				if state == Enum.UserInputState.Begin then
+					panelKey(input.KeyCode)
+				end
+				return Enum.ContextActionResult.Sink
+			end,
+			false,
+			Enum.ContextActionPriority.High.Value + 100,
+			Enum.KeyCode.W,
+			Enum.KeyCode.A,
+			Enum.KeyCode.S,
+			Enum.KeyCode.D,
+			Enum.KeyCode.Q,
+			Enum.KeyCode.E,
+			Enum.KeyCode.Up,
+			Enum.KeyCode.Down,
+			Enum.KeyCode.Left,
+			Enum.KeyCode.Right,
+			Enum.KeyCode.Space,
+			Enum.KeyCode.Thumbstick1,
+			Enum.KeyCode.ButtonX
+		)
+	else
+		ContextActionService:UnbindAction(HOLD_ACTION)
+	end
+end
 
 local function serverNow(): number
 	return Workspace:GetServerTimeNow()
@@ -572,6 +613,7 @@ local function onDevice(message: { [string]: any })
 		end
 		current = { id = message.id, kind = message.kind, state = message.state or {} }
 		window.Visible = true
+		holdControls(true)
 		Devices.render()
 	elseif message.op == "update" and current and current.id == message.id then
 		current.state = message.state or {}
@@ -584,6 +626,7 @@ local function onDevice(message: { [string]: any })
 	elseif message.op == "close" and current and current.id == message.id then
 		current = nil
 		window.Visible = false
+		holdControls(false)
 		dropFeed()
 		clearBody()
 	end
@@ -605,6 +648,7 @@ local function build()
 		Make.corner(4),
 		Make.new("UISizeConstraint", { MaxSize = Vector2.new(780, 620) }),
 	})
+	Make.modal(window)
 	titleLabel = Make.text({
 		Text = "",
 		Font = Theme.Font,
@@ -646,6 +690,20 @@ function Devices.init()
 			onDevice({ op = "close", id = current.id })
 		end
 	end)
+	panelKey = function(keyCode: Enum.KeyCode)
+		if not current or current.kind ~= "Tuner" then
+			return
+		end
+		if keyCode == Enum.KeyCode.Left or keyCode == Enum.KeyCode.A then
+			nudge(-(current.state.fine or 0.05))
+		elseif keyCode == Enum.KeyCode.Right or keyCode == Enum.KeyCode.D then
+			nudge(current.state.fine or 0.05)
+		elseif keyCode == Enum.KeyCode.Q then
+			nudge(-(current.state.coarse or 1))
+		elseif keyCode == Enum.KeyCode.E then
+			nudge(current.state.coarse or 1)
+		end
+	end
 	UserInputService.InputBegan:Connect(function(input, processed)
 		if processed or not current then
 			return
@@ -656,16 +714,6 @@ function Devices.init()
 			or input.KeyCode == Enum.KeyCode.ButtonB
 		then
 			closeRequest()
-		elseif current.kind == "Tuner" then
-			if input.KeyCode == Enum.KeyCode.Left or input.KeyCode == Enum.KeyCode.A then
-				nudge(-(current.state.fine or 0.05))
-			elseif input.KeyCode == Enum.KeyCode.Right or input.KeyCode == Enum.KeyCode.D then
-				nudge(current.state.fine or 0.05)
-			elseif input.KeyCode == Enum.KeyCode.Q then
-				nudge(-(current.state.coarse or 1))
-			elseif input.KeyCode == Enum.KeyCode.E then
-				nudge(current.state.coarse or 1)
-			end
 		end
 	end)
 	RunService.RenderStepped:Connect(function(dt)

@@ -85,11 +85,13 @@ local function holdCamera(name: string, drift: boolean)
 end
 
 local function releaseCamera()
-	if not cameraHeld then
+	local camera = Workspace.CurrentCamera
+	-- Nothing else in the game scripts the camera, so a Scriptable camera outside the title and
+	-- ending shots is always stale: hand it back to the player.
+	if not cameraHeld and not (camera and camera.CameraType == Enum.CameraType.Scriptable) then
 		return
 	end
 	cameraHeld = false
-	local camera = Workspace.CurrentCamera
 	if camera then
 		camera.CameraType = Enum.CameraType.Custom
 		local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
@@ -368,6 +370,7 @@ local function build()
 	-- Title card.
 	titleFrame =
 		Make.new("Frame", { Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, Visible = false, Parent = gui })
+	Make.modal(titleFrame)
 	Make.text({
 		Text = t("ui.title"),
 		Font = Theme.FontTitle,
@@ -413,6 +416,7 @@ local function build()
 		Position = UDim2.new(0, 20, 1, -20),
 		AnchorPoint = Vector2.new(0, 1),
 	})
+	Make.modal(lobbyFrame)
 	Make.padding(10).Parent = lobbyFrame
 	Make.list(Enum.FillDirection.Vertical, 6).Parent = lobbyFrame
 	Make.text({ Name = "CrewTitle", Text = "", TextColor3 = Theme.Colors.Amber, LayoutOrder = 1, Parent = lobbyFrame })
@@ -454,6 +458,7 @@ local function build()
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		ZIndex = 5,
 	})
+	Make.modal(settingsFrame)
 	Make.new("UISizeConstraint", { MaxSize = Vector2.new(640, 560) }).Parent = settingsFrame
 	Make.text({
 		Name = "Title",
@@ -561,6 +566,7 @@ local function build()
 		Visible = false,
 		Parent = gui,
 	})
+	Make.modal(endingFrame)
 	endingTitle = Make.text({
 		Text = "",
 		Font = Theme.FontTitle,

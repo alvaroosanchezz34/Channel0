@@ -89,6 +89,20 @@ function Make.button(props: { [string]: any }, onActivate: () -> ()): TextButton
 	return button
 end
 
+-- An invisible modal button: while `parent` is visible, the first-person camera releases the
+-- mouse so panels and menus can be clicked.
+function Make.modal(parent: Instance): TextButton
+	return Make.new("TextButton", {
+		Name = "CursorUnlock",
+		Modal = true,
+		Text = "",
+		BackgroundTransparency = 1,
+		Size = UDim2.fromOffset(0, 0),
+		Selectable = false,
+		Parent = parent,
+	})
+end
+
 -- Full-screen-safe root ScreenGui.
 function Make.screen(name: string, order: number, parent: Instance): ScreenGui
 	return Make.new("ScreenGui", {

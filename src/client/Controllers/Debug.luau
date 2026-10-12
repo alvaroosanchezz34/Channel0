@@ -120,6 +120,7 @@ local function build()
 		Visible = false,
 		Parent = screen,
 	}, { Make.stroke(Theme.Colors.Red, 1) })
+	Make.modal(frame)
 	local scroll = Make.new("ScrollingFrame", {
 		Size = UDim2.new(1, -16, 1, -16),
 		Position = UDim2.fromOffset(8, 8),
